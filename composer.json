@@ -1,0 +1,26 @@
+{
+    "name": "wearepixel/laravel-google-shopping-feed",
+    "type": "library",
+    "description": "Laravel Google Shopping Feed",
+    "keywords": [
+        "laravel",
+        "google-shopping-feed"
+    ],
+    "version": "1.0.0",
+    "homepage": "https://github.com/wearepixel/laravel-google-shopping-feed",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pixel",
+            "email": "hello@wearepixel.com.au"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "Wearepixel\\LaravelGoogleShoppingFeed\\" : "src/" }
+    },
+    "require": {
+        "spatie/array-to-xml": "2.8.*|3.*.*",
+        "illuminate/support": "8.*|9.*"
+    },
+    "prefer-stable": true
+}
