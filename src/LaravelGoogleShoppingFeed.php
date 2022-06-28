@@ -41,13 +41,9 @@ class LaravelGoogleShoppingFeed
             }
         }
 
-        $product = [
-            'id' => $item['id'],
-            'link' => $item['link'],
-            'title' => $item['title'],
-            'price' => $item['price'],
-            'image_link' => $item['image_link'],
-        ];
+        foreach ($item as $key => $value) {
+            $product[$key] = $value;
+        }
 
         $this->products[] = $product;
 
