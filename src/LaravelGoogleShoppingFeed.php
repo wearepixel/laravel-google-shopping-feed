@@ -19,7 +19,7 @@ class LaravelGoogleShoppingFeed
         'link',
         'title',
         'price',
-        'image_link'
+        'g:image_link'
     ];
 
     public static function init($title = null, $description = null, $link = null)
@@ -53,7 +53,7 @@ class LaravelGoogleShoppingFeed
     public function generate()
     {
         $this->xml = [
-            'rss' 	=> [
+            'rss' => [
                 '_attributes' => [
                     'xmlns:g' => 'http://base.google.com/ns/1.0',
                     'version' => '2.0',
