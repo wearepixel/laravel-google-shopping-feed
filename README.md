@@ -25,8 +25,8 @@ $feed->addItem([
 	'id' => 'item_001',
 	'title' => 'Blue Nikes',
 	'link' => 'https://mystore.com/products/blue-nikes',
-	'image_link' => 'https://mystore.com/images/blue-nikes-001.jpg',
-	'price' => 29.99,
+	'g:image_link' => 'https://mystore.com/images/blue-nikes-001.jpg',
+	'g:price' => 29.99,
 ]);
 
 return $feed->generate();

@@ -18,7 +18,7 @@ class LaravelGoogleShoppingFeed
         'id',
         'link',
         'title',
-        'price',
+        'g:price',
         'g:image_link'
     ];
 
