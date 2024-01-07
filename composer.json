@@ -6,7 +6,7 @@
         "laravel",
         "google-shopping-feed"
     ],
-    "version": "3.0.0",
+    "version": "4.0.0",
     "homepage": "https://github.com/wearepixel/laravel-google-shopping-feed",
     "license": "MIT",
     "authors": [
@@ -20,7 +20,7 @@
     },
     "require": {
         "spatie/array-to-xml": "2.8.*|3.*.*",
-        "illuminate/support": "8.*|9.*"
+        "illuminate/support": "8.*|9.*|10.*|11.*"
     },
     "prefer-stable": true
 }
