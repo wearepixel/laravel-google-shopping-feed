@@ -15,7 +15,7 @@ composer require wearepixel/laravel-google-shopping-feed
 ```php
 use Wearepixel\LaravelGoogleShoppingFeed\LaravelGoogleShoppingFeed;
 
-$feed = LaravelGoogleShopping::init(
+$feed = LaravelGoogleShoppingFeed::init(
 	'Product Feed',
 	'App product Feed',
 	'https://mystore.com'
