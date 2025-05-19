@@ -20,7 +20,7 @@
     },
     "require": {
         "spatie/array-to-xml": "2.8.*|3.*.*",
-        "illuminate/support": "8.*|9.*|10.*|11.*"
+        "illuminate/support": "8.*|9.*|10.*|11.*|12.*"
     },
     "prefer-stable": true
 }
