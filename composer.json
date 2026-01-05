@@ -6,7 +6,7 @@
         "laravel",
         "google-shopping-feed"
     ],
-    "version": "4.0.0",
+    "version": "5.0.0",
     "homepage": "https://github.com/wearepixel/laravel-google-shopping-feed",
     "license": "MIT",
     "authors": [
