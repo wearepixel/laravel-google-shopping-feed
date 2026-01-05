@@ -19,8 +19,12 @@
         "psr-4": { "Wearepixel\\LaravelGoogleShoppingFeed\\" : "src/" }
     },
     "require": {
-        "spatie/array-to-xml": "2.8.*|3.*.*",
-        "illuminate/support": "8.*|9.*|10.*|11.*"
+        "php": ">=8.3",
+        "spatie/array-to-xml": "2.8.*|3.*",
+        "illuminate/support": "10.*|11.*|12.*"
     },
-    "prefer-stable": true
+    "prefer-stable": true,
+    "require-dev": {
+        "laravel/pint": "^1.26"
+    }
 }

@@ -7,24 +7,28 @@ use Spatie\ArrayToXml\ArrayToXml;
 class LaravelGoogleShoppingFeed
 {
     public $title;
+
     public $description;
+
     public $link;
 
     protected $xml = [];
+
     protected $products = [];
-    protected $currency = "AUD";
+
+    protected $currency = 'AUD';
 
     protected $requiredProductFields = [
         'id',
         'link',
         'title',
         'g:price',
-        'g:image_link'
+        'g:image_link',
     ];
 
     public static function init($title = null, $description = null, $link = null)
     {
-        $feed = new self();
+        $feed = new self;
 
         $feed->title = $title;
         $feed->description = $description;
@@ -36,7 +40,7 @@ class LaravelGoogleShoppingFeed
     public function addItem(array $item): bool
     {
         foreach ($this->requiredProductFields as $field) {
-            if (!isset($item[$field])) {
+            if (! isset($item[$field])) {
                 throw new \Exception("Required field '{$field}' is missing");
             }
         }
@@ -62,8 +66,8 @@ class LaravelGoogleShoppingFeed
                     'title' => $this->title,
                     'description' => $this->description,
                     'link' => $this->link,
-                ]
-            ]
+                ],
+            ],
         ];
 
         foreach ($this->products as $key => $product) {
@@ -73,12 +77,12 @@ class LaravelGoogleShoppingFeed
         $xml = ArrayToXml::convert($this->xml, '');
         $xml = str_replace(['    ', '<root>', '</root>', "\n", "\r", '<remove>remove</remove>'], '', $xml);
         $xml = preg_replace([
-            "/item_[0-9][0-9][0-9][0-9]/",
-            "/item_[0-9][0-9][0-9]/",
-            "/item_[0-9][0-9]/",
-            "/item_[0-9]/",
-        ], "item", $xml);
+            '/item_[0-9][0-9][0-9][0-9]/',
+            '/item_[0-9][0-9][0-9]/',
+            '/item_[0-9][0-9]/',
+            '/item_[0-9]/',
+        ], 'item', $xml);
 
-        return response($xml)->header('Content-Type', 'text/xml');
+        return response($xml, 200, ['Content-Type' => 'text/xml']);
     }
 }
