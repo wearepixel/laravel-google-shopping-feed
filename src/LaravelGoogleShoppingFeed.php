@@ -2,6 +2,7 @@
 
 namespace Wearepixel\LaravelGoogleShoppingFeed;
 
+use Illuminate\Support\Facades\Response;
 use Spatie\ArrayToXml\ArrayToXml;
 
 class LaravelGoogleShoppingFeed
@@ -83,6 +84,6 @@ class LaravelGoogleShoppingFeed
             '/item_[0-9]/',
         ], 'item', $xml);
 
-        return response($xml, 200, ['Content-Type' => 'text/xml']);
+        return Response::make($xml, 200, ['Content-Type' => 'text/xml']);
     }
 }
