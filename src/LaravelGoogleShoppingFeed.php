@@ -1,24 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Wearepixel\LaravelGoogleShoppingFeed;
 
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Response as ResponseFacade;
 use Spatie\ArrayToXml\ArrayToXml;
+use Wearepixel\LaravelGoogleShoppingFeed\Exceptions\MissingRequiredFieldException;
 
 class LaravelGoogleShoppingFeed
 {
-    public $title;
+    public string $title = '';
+    public string $description = '';
+    public string $link = '';
 
-    public $description;
+    protected array $products = [];
 
-    public $link;
-
-    protected $xml = [];
-
-    protected $products = [];
-
-    protected $currency = 'AUD';
-
-    protected $requiredProductFields = [
+    protected array $requiredProductFields = [
         'id',
         'link',
         'title',
@@ -26,10 +25,9 @@ class LaravelGoogleShoppingFeed
         'g:image_link',
     ];
 
-    public static function init($title = null, $description = null, $link = null)
+    public static function init(string $title = '', string $description = '', string $link = ''): static
     {
-        $feed = new self;
-
+        $feed = new static;
         $feed->title = $title;
         $feed->description = $description;
         $feed->link = $link;
@@ -41,22 +39,18 @@ class LaravelGoogleShoppingFeed
     {
         foreach ($this->requiredProductFields as $field) {
             if (! isset($item[$field])) {
-                throw new \Exception("Required field '{$field}' is missing");
+                throw new MissingRequiredFieldException("Required field '{$field}' is missing");
             }
         }
 
-        foreach ($item as $key => $value) {
-            $product[$key] = $value;
-        }
-
-        $this->products[] = $product;
+        $this->products[] = $item;
 
         return true;
     }
 
-    public function generate()
+    public function toXml(): string
     {
-        $this->xml = [
+        $data = [
             'rss' => [
                 '_attributes' => [
                     'xmlns:g' => 'http://base.google.com/ns/1.0',
@@ -71,18 +65,18 @@ class LaravelGoogleShoppingFeed
         ];
 
         foreach ($this->products as $key => $product) {
-            $this->xml['rss']['channel']['item_'.$key] = $product;
+            $data['rss']['channel']['item_' . $key] = $product;
         }
 
-        $xml = ArrayToXml::convert($this->xml, '');
+        $xml = ArrayToXml::convert($data, '');
         $xml = str_replace(['    ', '<root>', '</root>', "\n", "\r", '<remove>remove</remove>'], '', $xml);
-        $xml = preg_replace([
-            '/item_[0-9][0-9][0-9][0-9]/',
-            '/item_[0-9][0-9][0-9]/',
-            '/item_[0-9][0-9]/',
-            '/item_[0-9]/',
-        ], 'item', $xml);
+        $xml = (string) preg_replace('/item_\d+/', 'item', $xml);
 
-        return response($xml, 200, ['Content-Type' => 'text/xml']);
+        return $xml;
+    }
+
+    public function generate(): Response
+    {
+        return ResponseFacade::make($this->toXml(), 200, ['Content-Type' => 'text/xml']);
     }
 }
