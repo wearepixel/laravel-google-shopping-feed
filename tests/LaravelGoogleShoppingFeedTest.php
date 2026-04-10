@@ -39,7 +39,7 @@ describe('addItem', function () {
         $feed = LaravelGoogleShoppingFeed::init('', '', '');
         $feed->addItem(validProduct());
 
-        expect($feed)->toBeInstanceOf(LaravelGoogleShoppingFeed::class);
+        expect($feed->toXml())->toContain('prod-1');
     });
 
     it('throws for missing required field', function (string $field) {
@@ -144,6 +144,14 @@ describe('toXml', function () {
     it('includes the xml declaration', function () {
         $feed = LaravelGoogleShoppingFeed::init('', '', '');
         expect($feed->toXml())->toStartWith('<?xml');
+    });
+
+    it('generates parseable xml', function () {
+        $feed = LaravelGoogleShoppingFeed::init('Store', 'Desc', 'https://example.com');
+        $feed->addItem(validProduct());
+
+        $result = simplexml_load_string($feed->toXml());
+        expect($result)->not->toBeFalse();
     });
 });
 
