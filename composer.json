@@ -33,7 +33,7 @@
   "prefer-stable": true,
   "require-dev": {
     "laravel/pint": "^1.29",
-    "pestphp/pest": "^3.0",
+    "pestphp/pest": "^4.0",
     "orchestra/testbench": "^10.0"
   },
   "scripts": {
