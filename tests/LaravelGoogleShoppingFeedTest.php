@@ -36,10 +36,10 @@ describe('init', function () {
 
 describe('addItem', function () {
     it('accepts a valid item without throwing', function () {
-        $feed = LaravelGoogleShoppingFeed::init();
+        $feed = LaravelGoogleShoppingFeed::init('', '', '');
         $feed->addItem(validProduct());
 
-        expect(true)->toBeTrue();
+        expect($feed)->toBeInstanceOf(LaravelGoogleShoppingFeed::class);
     });
 
     it('throws for missing required field', function (string $field) {
@@ -63,7 +63,7 @@ describe('toXml', function () {
     it('returns a string', function () {
         $feed = LaravelGoogleShoppingFeed::init('Store', 'Desc', 'https://example.com');
 
-        expect(is_string($feed->toXml()))->toBeTrue();
+        expect($feed->toXml())->toBeString();
     });
 
     it('contains the RSS xmlns:g attribute', function () {
@@ -85,9 +85,9 @@ describe('toXml', function () {
         $xml = $feed->toXml();
 
         expect($xml)
-            ->toContain('My Store')
-            ->toContain('My Description')
-            ->toContain('https://example.com');
+            ->toContain('<title>My Store</title>')
+            ->toContain('<description>My Description</description>')
+            ->toContain('<link>https://example.com</link>');
     });
 
     it('includes product data', function () {
@@ -119,6 +119,31 @@ describe('toXml', function () {
         expect(substr_count($xml, '<item>'))->toBe(2)
             ->and($xml)->toContain('<id>prod-1</id>')
             ->and($xml)->toContain('<id>prod-2</id>');
+    });
+
+    it('includes namespaced google fields in output', function () {
+        $feed = LaravelGoogleShoppingFeed::init('', '', '');
+        $feed->addItem(validProduct());
+        $xml = $feed->toXml();
+
+        expect($xml)
+            ->toContain('<g:price>29.99 AUD</g:price>')
+            ->toContain('<g:image_link>https://example.com/image.jpg</g:image_link>');
+    });
+
+    it('generates valid xml with no products', function () {
+        $feed = LaravelGoogleShoppingFeed::init('My Store', 'My Desc', 'https://example.com');
+        $xml = $feed->toXml();
+
+        expect($xml)
+            ->toBeString()
+            ->toContain('<title>My Store</title>')
+            ->not->toContain('<item>');
+    });
+
+    it('includes the xml declaration', function () {
+        $feed = LaravelGoogleShoppingFeed::init('', '', '');
+        expect($feed->toXml())->toStartWith('<?xml');
     });
 });
 
