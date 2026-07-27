@@ -1,0 +1,59 @@
+name: Dependabot Auto-merge
+
+on:
+  workflow_run:
+    workflows: ["Tests"]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.actor.login == 'dependabot[bot]'
+
+    steps:
+      - name: Find PR and check update type
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          PR_DATA=$(gh pr list --repo "${{ github.repository }}" --head "$HEAD_BRANCH" --json number,title,url,author --jq '.[0]')
+
+          PR_URL=$(echo "$PR_DATA" | jq -r '.url')
+          PR_AUTHOR=$(echo "$PR_DATA" | jq -r '.author.login')
+          PR_TITLE=$(echo "$PR_DATA" | jq -r '.title')
+
+          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+
+          if [ "$PR_AUTHOR" != "app/dependabot" ]; then
+            echo "is_safe=false" >> $GITHUB_OUTPUT
+            echo "Not a Dependabot PR, skipping."
+            exit 0
+          fi
+
+          # Parse major version numbers from title: "bump X from A[.B.C] to D[.E.F]"
+          # Works for both "from 4.0.0 to 4.1.0" and "from 4 to 6" (GitHub Actions)
+          FROM_MAJOR=$(echo "$PR_TITLE" | grep -oP 'from \K[0-9]+')
+          TO_MAJOR=$(echo "$PR_TITLE" | grep -oP 'to \K[0-9]+')
+
+          echo "PR: $PR_TITLE (major: $FROM_MAJOR -> $TO_MAJOR)"
+
+          if [ "$FROM_MAJOR" = "$TO_MAJOR" ]; then
+            echo "is_safe=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_safe=false" >> $GITHUB_OUTPUT
+            echo "Major version bump, skipping auto-merge."
+          fi
+
+      - name: Merge minor and patch updates
+        if: steps.check.outputs.is_safe == 'true'
+        run: gh pr merge --merge "${{ steps.check.outputs.pr_url }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
