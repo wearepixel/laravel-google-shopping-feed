@@ -13,7 +13,7 @@ We recommend adding this to an API controller and generating it on the fly so yo
 ## Requirements
 
 - PHP 8.4+
-- Laravel 10, 11, or 12
+- Laravel 10, 11, 12 or 13
 
 ## Installation
 
